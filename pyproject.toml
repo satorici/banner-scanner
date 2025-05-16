@@ -1,0 +1,20 @@
+[project]
+name = "banner-scanner"
+version = "0.1.0"
+authors = [
+    {name = "Satori CI", email = "info@satori.ci"},
+]
+dependencies = [
+    "httpx>=0.28.1",
+]
+requires-python = ">=3.9"
+
+[project.scripts]
+banner-scanner = "banner_scanner:cli"
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[tool.pdm]
+distribution = true
