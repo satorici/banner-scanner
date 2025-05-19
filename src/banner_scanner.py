@@ -4,7 +4,7 @@ import itertools
 import sys
 import uuid
 
-from httpx import AsyncClient, Limits
+from httpx import AsyncClient, Limits, Request
 
 AMOUNT = None  # None for all
 CONCURRENCY = 1000
@@ -14,9 +14,19 @@ client = AsyncClient(limits=Limits(max_connections=CONCURRENCY))
 
 async def probe_ip(ip: str, port: int, timeout=3):
     try:
-        res = await client.head(
-            f"http://{ip}:{port}/{uuid.uuid4().hex}", timeout=timeout
+        req = Request(
+            "HEAD",
+            f"http://{ip}:{port}/{uuid.uuid4().hex}",
+            extensions={
+                "timeout": {
+                    "connect": timeout,
+                    "pool": timeout,
+                    "read": timeout,
+                    "write": timeout,
+                }
+            },
         )
+        res = await client.send(req)
 
         if res.headers.get("Server") is not None:
             print(ip, res.headers["Server"], res.status_code, sep=",")
