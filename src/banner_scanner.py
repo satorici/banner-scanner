@@ -16,7 +16,7 @@ async def probe_ip(ip: str, port: int, timeout=3):
     try:
         req = Request(
             "HEAD",
-            f"http://{ip}:{port}/{uuid.uuid4().hex}",
+            f"http://{ip}:{port}/{uuid.uuid4().hex}?satori.ci/opt",
             extensions={
                 "timeout": {
                     "connect": timeout,
