@@ -61,7 +61,7 @@ def cli():
 
     parser.add_argument("file", help="File with a list of IP addresses")
     parser.add_argument("port")
-    parser.add_argument("--timeout", type=int, default=3)
+    parser.add_argument("--timeout", type=int, default=1)
 
     args = parser.parse_args()
 
