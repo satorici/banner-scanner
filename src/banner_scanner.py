@@ -7,9 +7,7 @@ import uuid
 from httpx import AsyncClient, Limits, Request
 
 AMOUNT = None  # None for all
-CONCURRENCY = 1000
-
-client = AsyncClient(limits=Limits(max_connections=CONCURRENCY))
+client: AsyncClient
 
 
 async def probe_ip(ip: str, port: int, timeout=3):
@@ -62,14 +60,21 @@ def cli():
     parser.add_argument("file", help="File with a list of IP addresses")
     parser.add_argument("port")
     parser.add_argument("--timeout", type=int, default=1)
+    parser.add_argument("--concurrency", type=int, default=5)
 
     args = parser.parse_args()
 
     ips = read_ips(args.file)
 
+    global client
+    client = AsyncClient(limits=Limits(max_connections=args.concurrency))
+
     async def main():
         await asyncio.gather(
-            *[worker(part, args.port, args.timeout) for part in split(ips, CONCURRENCY)]
+            *[
+                worker(part, args.port, args.timeout)
+                for part in split(ips, args.concurrency)
+            ]
         )
 
     asyncio.run(main())
